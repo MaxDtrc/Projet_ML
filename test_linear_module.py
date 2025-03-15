@@ -31,7 +31,7 @@ y_test = y_test.reshape(y_test.shape[0], 1)
 accuracy = []
 for i in range(20):
     print("Itération", i)
-    pred = np.tanh(c2.forward(c1.forward(x_train))) # Prediction des données de train
+    pred = np.tanh(c2.forward(c1.forward(x_train))) # Prediction des données de train (ça marche ni avec sign ni avec une tangente hyperbolique de toute façon)
     grad_loss = loss.backward(pred, y_train) # Calcul du gradient de la loss
     
     for x, delta in zip(x_train, grad_loss):
