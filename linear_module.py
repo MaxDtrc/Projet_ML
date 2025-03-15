@@ -47,9 +47,10 @@ class Linear(Module):
     def backward_delta(self, input, delta):
         pass
 
-
-
 if __name__ == "__main__":
+    """
+    Test de la MSE Loss
+    """
     #Données artificielles
     test = np.array([[0.1, 2, 4],
             [0.2, 3, 6]])
