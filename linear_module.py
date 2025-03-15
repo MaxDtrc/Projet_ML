@@ -76,7 +76,7 @@ class Linear(Module):
     def backward_delta(self, input, delta):
         """
         Calcule le gradient des entrées par rapport à une entrée et aux dérivées des entrées de la couche suivante.
-        Ici, il s'agit d'une couche linéaire. Donc, d(z_i) = somme_sur_j x_i * z_j * w_ij
+        Ici, il s'agit d'une couche linéaire. Donc, d(z_i) = somme_sur_j(x_i * z_j * w_ij)
 
         input : une entrée (taille d)
         delta : dérivées des entrées de la couche suivante (taille output_size)
