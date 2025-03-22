@@ -9,9 +9,7 @@ class MSELoss(Loss):
         y_hat: ensemble des étiquettes prédites (n * d)
         """
         assert(y.shape == y_hat.shape) # Vérification des dimensions
-
-        n, d = y.shape
-        return 1/d * np.sum(np.square(y - y_hat), axis=1)
+        return np.mean(np.square(y - y_hat))
 
     def backward(self, y, y_hat):
         """
@@ -23,13 +21,14 @@ class MSELoss(Loss):
         assert(y.shape == y_hat.shape) # Vérification des dimensions
 
         n, d = y.shape
-        return 2/d * (y_hat - y)
+        return 2 / (n * d) * (y_hat - y)
         
 class Linear(Module):
     def __init__(self, input_size, output_size):
         self._input_size = input_size
         self._output_size = output_size
-        self._parameters = np.ones(shape=(output_size, input_size)) # Poids de pour chaque dimension de l'entrée
+        self._parameters = np.random.randn(output_size, input_size) * np.sqrt(2 / input_size) # Poids random pour chaque dimension de l'entrée
+        self._bias = np.zeros(output_size) # Création d'un biais (à 0 initialement)
         self._gradient = np.zeros(self._parameters.shape) # Mise à 0 du gradient
 
     def zero_grad(self):
@@ -46,7 +45,7 @@ class Linear(Module):
         Sortie : taille n * output_size
         """
         assert(X.shape[1] == self._input_size) # Vérification dimension des entrées
-        out = np.dot(X, self._parameters.T) # Calcul des valeurs de sortie (sans biais pour l'instant)
+        out = np.dot(X, self._parameters.T) + self._bias # Calcul des valeurs de sortie
         assert(out.shape == (X.shape[0], self._output_size)) # Vérification dimension des sorties
         return out
     
@@ -84,12 +83,9 @@ class Linear(Module):
         assert(input.shape == (self._input_size,)) # Vérification taille de l'entrée
         assert(delta.shape == (self._output_size,)) # Vérification taille du tableau des delta
 
-        xi_zj = np.outer(delta, input)
-        assert(xi_zj.shape == self._parameters.shape)
-        z_i = np.sum(np.multiply(self._parameters, xi_zj), axis = 0)
-
-        assert(z_i.shape[0] == self._input_size)
-        return z_i
+        d = np.dot(self._parameters.T, delta)
+        assert(d.shape[0] == self._input_size)
+        return d
         
 
 if __name__ == "__main__":
