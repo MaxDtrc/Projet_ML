@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Test des modules linéaires avec 2 couches (sans fonction d'activation donc c'est un juste perceptron déguisé en vrai)
+# Test des modules non linéaires
 
 loss = MSELoss()
 c1 = Linear(2, 5) # Couche 1, 5 neurones
@@ -54,8 +54,8 @@ for i in range(2000):
     c1.zero_grad()
 
     # Calcul des performances
-    pred_train = np.sign(c2.forward(c1.forward(x_test)))
-    accuracy.append(np.mean(pred_train == y_test))
+    pred_test = np.sign(c2.forward(c1.forward(x_test)))
+    accuracy.append(np.mean(pred_test == y_test))
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(accuracy)), accuracy)

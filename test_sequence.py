@@ -1,14 +1,12 @@
 from linear_module import MSELoss, Linear
+from non_linear_module import TanH, Sigmoide
+from sequence import Sequentiel, Optim
 from sklearn.datasets import make_classification, make_blobs
 from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Test des modules linéaires avec 2 couches (sans fonction d'activation donc c'est un juste perceptron déguisé en vrai)
-
-loss = MSELoss()
-c1 = Linear(2, 5) # Couche 1, 5 neurones
-c2 = Linear(5, 1) # Couche 2, fusion des neurones
+# Test des séquences de modules
 
 # Génération de données artificielles
 X, Y = make_classification(n_classes=2, n_features=2, n_redundant=0, n_informative=1,
@@ -26,28 +24,24 @@ plt.scatter(x_train[:, 0], x_train[:, 1], marker='o', c=y_train)
 plt.scatter(x_test[:, 0], x_test[:, 1], marker='x', c=y_test)
 plt.show()
 
+# Création du réseau
+modules = [Linear(2, 5), TanH(), Linear(5, 1), Sigmoide()]
+network = Sequentiel(modules)
+optim = Optim(network, MSELoss(), 0.1)
+
 # Boucle màj 
 accuracy = []
 for i in range(2000):
-    print("Itération", i)
+    #print("Itération", i)
 
-    pred = c2.forward(c1.forward(x_train)) # Prediction
-    grad_loss = loss.backward(y_train, pred) # Calcul du gradient de la loss
-    
-    pred_c1 = c1.forward(x_train)
-    c2.backward_update_gradient(pred_c1, grad_loss) # Màj du gradient de la couche 2
-    c2_grad = c2.backward_delta(pred_c1, grad_loss) # Calcul du gradient des entrées de la couche 2
-    c1.backward_update_gradient(x_train, c2_grad) # Màj du gradient de la couche 1
-
-    # Mise à jour des paramètres
-    c2.update_parameters(0.001)
-    c1.update_parameters(0.001)
-    c2.zero_grad()
-    c1.zero_grad()
+    optim.step(x_train, y_train) # Itération de la descente
 
     # Calcul des performances
-    pred_test = np.sign(c2.forward(c1.forward(x_test)))
+    pred_test = np.sign(optim._net.forward(x_test))
+
+    
     accuracy.append(np.mean(pred_test == y_test))
+    print(accuracy[i])
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(accuracy)), accuracy)
