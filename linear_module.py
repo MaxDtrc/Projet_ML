@@ -2,6 +2,10 @@ from neural_network import Loss, Module
 import numpy as np
 
 class MSELoss(Loss):
+    """
+    Classe représentant un module d'une fonction de coût MSE
+    """
+
     def forward(self, y, y_hat):
         """
         Renvoie la MSE des données passées en paramètres
@@ -21,9 +25,13 @@ class MSELoss(Loss):
         assert(y.shape == y_hat.shape) # Vérification des dimensions
 
         n, d = y.shape
-        return 2 / (n * d) * (y_hat - y)
+        return 2 / n * (y_hat - y)
         
 class Linear(Module):
+    """
+    Classe représentant un module linéaire
+    """
+
     def __init__(self, input_size, output_size):
         self._input_size = input_size
         self._output_size = output_size
@@ -60,13 +68,13 @@ class Linear(Module):
         Calcule le gradient des paramètres en fonction d'une entrée et des delta de la couche suivante.
         Ici, il s'agit d'une couche linéaire. Donc, d(w_ij) = delta_j * x_i
 
-        input : une entrée (taille d)
+        input : entrées (taille n)
         delta : dérivées des entrées de la couche suivante (taille output_size)
         """
-        assert(input.shape == (self._input_size,)) # Vérification taille de l'entrée
-        assert(delta.shape == (self._output_size,)) # Vérification taille du tableau des delta
+        assert(input.shape[1] == self._input_size) # Vérification taille de l'entrée
+        assert(delta.shape[1] == self._output_size) # Vérification taille du tableau des delta
 
-        grad = np.outer(delta, input) # Calcul du gradient pour chaque paramètre
+        grad = np.dot(delta.T, input) # Calcul du gradient pour chaque paramètre
 
         assert(grad.shape == self._gradient.shape) # Vérification taille du gradient
         self._gradient += grad # Accumulation du gradient
@@ -77,14 +85,15 @@ class Linear(Module):
         Calcule le gradient des entrées par rapport à une entrée et aux dérivées des entrées de la couche suivante.
         Ici, il s'agit d'une couche linéaire. Donc, d(z_i) = somme_sur_j(x_i * z_j * w_ij)
 
-        input : une entrée (taille d)
+        input : entrées (taille n)
         delta : dérivées des entrées de la couche suivante (taille output_size)
         """
-        assert(input.shape == (self._input_size,)) # Vérification taille de l'entrée
-        assert(delta.shape == (self._output_size,)) # Vérification taille du tableau des delta
+        assert(input.shape[1] == self._input_size) # Vérification taille de l'entrée
+        assert(delta.shape[1] == self._output_size) # Vérification taille du tableau des delta
 
-        d = np.dot(self._parameters.T, delta)
-        assert(d.shape[0] == self._input_size)
+        d = np.dot(delta, self._parameters)
+        
+        assert(d.shape[1] == self._input_size)
         return d
         
 
