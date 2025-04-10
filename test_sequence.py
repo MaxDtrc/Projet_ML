@@ -25,7 +25,7 @@ plt.scatter(x_test[:, 0], x_test[:, 1], marker='x', c=y_test)
 plt.show()
 
 # Création du réseau
-modules = [Linear(2, 5), TanH(), Linear(5, 1), Sigmoide()]
+modules = [Linear(2, 5), TanH(), Linear(5, 1), TanH()]
 network = Sequentiel(modules)
 optim = Optim(network, MSELoss(), 0.1)
 
@@ -38,8 +38,6 @@ for i in range(2000):
 
     # Calcul des performances
     pred_test = np.sign(optim._net.forward(x_test))
-
-    
     accuracy.append(np.mean(pred_test == y_test))
     print(accuracy[i])
 

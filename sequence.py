@@ -100,9 +100,11 @@ class Optim():
         """
 
         pred = self._net.forward(X) # Prédiction des étiquettes
-        grad_loss = self._loss.backward(pred, Y) # Gradient de la fonction de cout
+        grad_loss = self._loss.backward(Y, pred) # Gradient de la fonction de cout
 
         self._net.backward(X, grad_loss) # Calcul des gradients pour chaque module de la séquence
         self._net.update_parameters(self._eps) # Mise à jour des paramètres
+
+        print(self._net._modules[0]._parameters)
 
         self._net.zero_grad() # Remise à zero des gradients 
