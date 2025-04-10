@@ -27,7 +27,7 @@ plt.show()
 # Création du réseau
 modules = [Linear(2, 5), TanH(), Linear(5, 1), TanH()]
 network = Sequentiel(modules)
-optim = Optim(network, MSELoss(), 0.1)
+optim = Optim(network, MSELoss(), 0.001)
 
 # Boucle màj 
 accuracy = []
