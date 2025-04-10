@@ -105,6 +105,4 @@ class Optim():
         self._net.backward(X, grad_loss) # Calcul des gradients pour chaque module de la séquence
         self._net.update_parameters(self._eps) # Mise à jour des paramètres
 
-        print(self._net._modules[0]._parameters)
-
         self._net.zero_grad() # Remise à zero des gradients 

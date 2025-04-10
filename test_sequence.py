@@ -32,14 +32,14 @@ optim = Optim(network, MSELoss(), 0.001)
 # Boucle màj 
 accuracy = []
 for i in range(2000):
-    #print("Itération", i)
+    print("Itération", i)
 
     optim.step(x_train, y_train) # Itération de la descente
 
     # Calcul des performances
     pred_test = np.sign(optim._net.forward(x_test))
     accuracy.append(np.mean(pred_test == y_test))
-    print(accuracy[i])
+    #print(accuracy[i])
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(accuracy)), accuracy)
