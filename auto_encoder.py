@@ -1,6 +1,44 @@
 import numpy as np
 from linear_module import Linear
 from non_linear_module import TanH, Sigmoide
+from neural_network import Loss
+
+class BinaryCrossEntropyWithClip(Loss):
+    """
+    Classe représentant un module d'une fonction de coût cross-entropie avec Softmax passé au log
+    """
+
+    def forward(self, y, y_hat):
+        """
+        Renvoie la cross-entropie des données passées en paramètres
+        y: ensemble des étiquettes des données (n * d)
+        y_hat: ensemble des étiquettes prédites (n * d)
+        """
+        assert(y.shape == y_hat.shape) # Vérification des dimensions
+
+        # Stabilité numérique avec log-sum-exp trick
+        max_logits = np.max(y_hat, axis=1, keepdims=True)
+        logsumexp = max_logits + np.log(np.sum(np.exp(y_hat - max_logits), axis=1, keepdims=True)) # On retire le max sur chaque ligne pour éviter les trop grosse valeurs
+        correct_class_logits = np.sum(y * y_hat, axis=1, keepdims=True)
+
+        loss = -correct_class_logits + logsumexp
+        return np.mean(loss)
+
+    def backward(self, y, y_hat):
+        """
+        Renvoie le gradient du coût par rapport aux données prédites y_hat
+
+        y: ensemble des étiquettes des données (n)
+        y_hat: ensemble des étiquettes prédites (n)
+        """
+        assert(y.shape == y_hat.shape) # Vérification des dimensions
+
+        exp_logits = np.exp(y_hat - np.max(y_hat, axis=1, keepdims=True))
+        softmax = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+
+        grad = (softmax - y) / y.shape[0]  # division par batch_size
+        return grad
+
 
 class AutoEncoder():
     """
@@ -137,4 +175,4 @@ class AutoEncoder():
             mod.update_parameters(gradient_step)
 
 if __name__ == "__main__":
-    ae = AutoEncoder(100, 10, 9)
+    ae = AutoEncoder(100, 10, 1)
