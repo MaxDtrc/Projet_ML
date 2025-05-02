@@ -48,7 +48,7 @@ network = Sequentiel(modules)
 optim = Optim(network, loss_fn, learning_rate)
 
 # Apprentissage
-acc = optim.SGD(X_train, Y_train, batch_size, num_epochs, X_test, Y_test, log = True)
+_, acc = optim.SGD(X_train, Y_train, batch_size, num_epochs, X_test, Y_test, log = True)
 
 
 plt.plot(np.arange(len(acc)), acc)

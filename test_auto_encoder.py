@@ -16,8 +16,8 @@ X = mnist.data.astype(np.float32)
 Y = mnist.target.astype(int)
 
 indices = np.random.permutation(len(X))
-X = X[indices][:100]
-Y = Y[indices][:100]
+X = X[indices]
+Y = Y[indices]
 
 # Normalisation des pixel entre [0, 1]
 X /= 255.0
@@ -30,26 +30,24 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y_onehot, test_size=0.2, 
 
 # L'architecture du modèle
 input_size = 784
-min_size = 184
-steps = 2
+min_size = 1
+steps = 1
 
 # Creation du reseau
 network = AutoEncoder(input_size, min_size, steps)
 
 # Creation de l'optimiseur
 loss_fn = MSELoss()
-learning_rate = 0.001
+learning_rate = 0.01
 
 optim = Optim(network, loss_fn, learning_rate)
 
-# Boucle màj 
-l = []
-for i in range(3000):
-    print("Itération", i)
-    optim.step(X_train, X_train) # Itération de la descente
+# Paramètre pour la descente de gradient en mini-batch
+num_epochs = 10
+batch_size = 32
 
-    # Calcul de la loss sur les données d'entrainement
-    l.append(loss_fn.forward(network.forward(X_test), X_test))
+# Apprentissage
+l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(l)), l)

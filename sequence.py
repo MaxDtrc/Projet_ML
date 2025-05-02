@@ -121,8 +121,12 @@ class Optim():
         log: affichage des logs
         """
         acc = []
+        loss_train = []
 
         for epoch in range(num_epochs):
+            if log:
+                print("Itération", epoch)
+
             # On mélange les données d'entraînement
             indices = np.random.permutation(len(X))
             X_shuffled = X[indices]
@@ -135,6 +139,9 @@ class Optim():
                 # Step sur l'échantillon courant
                 self.step(X_batch, Y_batch)
 
+            # On calcule la loss
+            loss_train.append(self._loss.forward(self._net.forward(X), Y))
+
             # Test de l'accuracy
             if X_test is not None and Y_test is not None:
                 pred = np.argmax(self._net.forward(X_test), axis=1)
@@ -143,7 +150,7 @@ class Optim():
                 acc.append(accuracy)
 
                 if log:
-                    print("Itération", epoch, "- accuracy =", accuracy)
+                    print("Accuracy =", accuracy)
 
         # On retourne le tableau des accuracy si des données de test sont fournies, None sinon
-        return acc if X_test is not None and Y_test is not None else None
+        return (loss_train, acc) if X_test is not None and Y_test is not None else (loss_train, None)
