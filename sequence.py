@@ -1,3 +1,5 @@
+import numpy as np
+
 class Sequentiel():
     """
     Classe permettant de construire une série de modules
@@ -95,7 +97,7 @@ class Optim():
         """
         Effectue une itération de la descente de gradient
 
-        x: données en entrée
+        X: données en entrée
         Y: étiquettes des données
         """
 
@@ -106,3 +108,43 @@ class Optim():
         self._net.update_parameters(self._eps) # Mise à jour des paramètres
 
         self._net.zero_grad() # Remise à zero des gradients 
+
+    def SGD(self, X, Y, batch_size, num_epochs, X_test = None, Y_test = None, log = False):
+        """
+        Effectue l'apprentissage du réseau pendant un certain nombre d'itérations en mode mini-batch
+
+        X: données en entrées
+        Y: étiquettes des données
+        batch_size: taille des batch pour le découpage
+        num_epochs: nombre d'itérations pour l'apprentissage
+        X_test: données de test pour évaluer l'accuracy à chaque itétation
+        Y_test: labels de test pour évaluer l'accuracy à chaque itération
+        log: affichage des logs
+        """
+        acc = []
+
+        for epoch in range(num_epochs):
+            # On mélange les données d'entraînement
+            indices = np.random.permutation(len(X))
+            X_shuffled = X[indices]
+            Y_shuffled = Y[indices]
+
+            for i in range(0, len(X_shuffled), batch_size):
+                X_batch = X_shuffled[i:i+batch_size]
+                Y_batch = Y_shuffled[i:i+batch_size]
+
+                # Step sur l'échantillon courant
+                self.step(X_batch, Y_batch)
+
+            # Test de l'accuracy
+            if X_test is not None and Y_test is not None:
+                pred = np.argmax(self._net.forward(X_test), axis=1)
+                test_labels = np.argmax(Y_test, axis = 1)
+                accuracy = np.mean(pred == test_labels)
+                acc.append(accuracy)
+
+                if log:
+                    print("Itération", epoch, "- accuracy =", accuracy)
+
+        # On retourne le tableau des accuracy si des données de test sont fournies, None sinon
+        return acc if X_test is not None and Y_test is not None else None
