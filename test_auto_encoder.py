@@ -31,8 +31,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y_onehot, test_size=0.2, 
 
 # L'architecture du modèle
 input_size = 784
-min_size = 128
-steps = 1
+min_size = 10
+steps = 3
 
 # Creation du reseau
 network = AutoEncoder(input_size, min_size, steps)
@@ -58,8 +58,6 @@ plt.show()
 plt.imshow(network.forward(X_train[:1]).reshape(28, 28))
 plt.gray()
 plt.show()
-
-
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(l)), l)
