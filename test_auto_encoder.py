@@ -51,4 +51,4 @@ l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(l)), l)
-plt.show()
+plt.show()  
