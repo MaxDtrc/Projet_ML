@@ -28,9 +28,10 @@ Y_onehot = OneHotEncoder(sparse_output=False).fit_transform(Y.reshape(-1, 1))
 # Séparation de donnée en train et test
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y_onehot, test_size=0.2, random_state=42)
 
+
 # L'architecture du modèle
 input_size = 784
-min_size = 1
+min_size = 128
 steps = 1
 
 # Creation du reseau
@@ -48,6 +49,17 @@ batch_size = 32
 
 # Apprentissage
 l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
+
+# Premier chiffre de base
+plt.imshow(X_train[0].reshape(28, 28))
+plt.gray()
+plt.show()
+
+plt.imshow(network.forward(X_train[:1]).reshape(28, 28))
+plt.gray()
+plt.show()
+
+
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
 plt.plot(np.arange(len(l)), l)
