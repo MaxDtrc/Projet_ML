@@ -11,7 +11,6 @@ class Sequentiel():
 
         Parametres
         modules : liste des modules à ajouter
-        loss : fonction de coût à utiliser
         """
         self._modules = modules
 
