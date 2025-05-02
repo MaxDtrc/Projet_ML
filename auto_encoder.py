@@ -3,43 +3,6 @@ from linear_module import Linear
 from non_linear_module import TanH, Sigmoide
 from neural_network import Loss
 
-class BinaryCrossEntropyWithClip(Loss):
-    """
-    Classe représentant un module d'une fonction de coût cross-entropie avec Softmax passé au log
-    """
-
-    def forward(self, y, y_hat):
-        """
-        Renvoie la cross-entropie des données passées en paramètres
-        y: ensemble des étiquettes des données (n * d)
-        y_hat: ensemble des étiquettes prédites (n * d)
-        """
-        assert(y.shape == y_hat.shape) # Vérification des dimensions
-
-        # Stabilité numérique avec log-sum-exp trick
-        max_logits = np.max(y_hat, axis=1, keepdims=True)
-        logsumexp = max_logits + np.log(np.sum(np.exp(y_hat - max_logits), axis=1, keepdims=True)) # On retire le max sur chaque ligne pour éviter les trop grosse valeurs
-        correct_class_logits = np.sum(y * y_hat, axis=1, keepdims=True)
-
-        loss = -correct_class_logits + logsumexp
-        return np.mean(loss)
-
-    def backward(self, y, y_hat):
-        """
-        Renvoie le gradient du coût par rapport aux données prédites y_hat
-
-        y: ensemble des étiquettes des données (n)
-        y_hat: ensemble des étiquettes prédites (n)
-        """
-        assert(y.shape == y_hat.shape) # Vérification des dimensions
-
-        exp_logits = np.exp(y_hat - np.max(y_hat, axis=1, keepdims=True))
-        softmax = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
-
-        grad = (softmax - y) / y.shape[0]  # division par batch_size
-        return grad
-
-
 class AutoEncoder():
     """
     Classe permettant de construire un auto-encoder
@@ -67,7 +30,7 @@ class AutoEncoder():
         self._decoder = []
         for i in range(taille_min, taille_entree - s + 1, s):
             print("Decodeur - couche", i, "->", i + s, "ajoutée")
-            self._decoder.append(Linear(i, i + 1))
+            self._decoder.append(Linear(i, i + s))
             self._decoder.append(TanH())
 
         # Sigmoide en dernier module de la couche decoder
@@ -151,7 +114,7 @@ class AutoEncoder():
                 self._decoder[id].backward_update_gradient(preds[i], d) # Update du gradient du module
                 d = self._decoder[id].backward_delta(preds[i], d) # Calcul du delta
             else:
-                self._encoder[id].backward_update_gradient(preds[i], d) # Update du gradient du module
+                self._encoder[i].backward_update_gradient(preds[i], d) # Update du gradient du module
                 d = self._encoder[i].backward_delta(preds[i], d) # Calcul du delta
 
     def zero_grad(self):
