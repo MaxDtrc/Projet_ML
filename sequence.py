@@ -142,6 +142,9 @@ class Optim():
             # On calcule la loss
             loss_train.append(self._loss.forward(self._net.forward(X_shuffled), Y_shuffled))
 
+            if log:
+                print("Loss:", loss_train[-1])
+
             # Test de l'accuracy
             if X_test is not None and Y_test is not None:
                 pred = np.argmax(self._net.forward(X_test), axis=1)

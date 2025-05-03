@@ -3,6 +3,41 @@ from linear_module import Linear
 from non_linear_module import TanH, Sigmoide
 from neural_network import Loss
 
+
+class BinaryCrossEntropy(Loss):
+    """
+    Classe représentant un module d'une fonction de coût Cross Entropie Binaire
+    """
+
+    def forward(self, y, y_hat):
+        """
+        Renvoie le coût des données passées en paramètres
+        y: ensemble des étiquettes des données (n * d)
+        y_hat: ensemble des étiquettes prédites (n * d)
+        """
+        assert(y.shape == y_hat.shape) # Vérification des dimensions
+        
+        eps = 1e-9  # pour éviter log(0)
+        y_hat = np.clip(y_hat, eps, 1 - eps)
+        
+        return - np.mean(y * np.clip(np.log(y_hat), -100, np.inf) + (1 - y) * np.clip(np.log(1 - y_hat), -100, np.inf))
+    
+
+    def backward(self, y, y_hat):
+        """
+        Renvoie le gradient du coût par rapport aux données prédites y_hat
+
+        y: ensemble des étiquettes des données (n)
+        y_hat: ensemble des étiquettes prédites (n)
+        """
+        assert(y.shape == y_hat.shape) # Vérification des dimensions
+
+        n, _ = y.shape
+        eps = 1e-9
+        y_hat = np.clip(y_hat, eps, 1 - eps)
+
+        return - (y / y_hat - (1 - y) / (1 - y_hat)) / n
+
 class AutoEncoder():
     """
     Classe permettant de construire un auto-encoder
