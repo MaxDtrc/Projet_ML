@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 class Sequentiel():
@@ -74,6 +75,82 @@ class Sequentiel():
         for mod in self._modules:
             mod.update_parameters(gradient_step)
 
+    def save(self, name):
+        """
+        Sauvegarde le réseau de neurone dans un fichier texte
+        """
+        with open(os.path.join("networks", name), "w") as file:
+            for mod in self._modules:
+                if hasattr(mod, "_input_size") and hasattr(mod, "_input_size"):
+                    # Module avec paramètres
+                    file.write(mod.__class__.__name__ + " " + str(mod._input_size) + " " + str(mod._output_size) + '\n')
+
+                    file.write(str(mod._parameters.tolist()) + '\n')
+                    file.write(str(mod._bias.tolist()) + '\n')
+
+                else:
+                    # Module sans paramètres
+                    file.write(mod.__class__.__name__ + '\n')
+                
+                file.write("\n")
+
+        print("Réseau sauvegardé")
+
+    def load(self, name):
+        """
+        Charge un réseau de neurones depuis un fichier texte
+        """
+        self._modules = []
+
+        with open(os.path.join("networks", name), "r") as file:
+            # Lecture du fichier
+            lines = file.readlines()
+            i = 0
+
+            # Parcours des lignes
+            while i < len(lines):
+                l = lines[i]
+                ls = l.replace('\n', '').split(" ")
+
+                if len(ls) == 3:
+                    # Modules avec paramètres
+                    mod = eval(ls[0])(int(ls[1]), int(ls[2])) # Création du module
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i].replace('\n', '')
+
+                    mod._parameters = np.array(eval(l)) # Charement des paramètres
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i].replace('\n', '')
+
+                    mod._bias = np.array(eval(l)) # Chargement du biais
+                    
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i]
+
+                    assert l == '\n' # On vérifie qu'on est bien à la fin du module
+
+                if len(ls) == 1:
+                    # Module sans paramètres
+                    mod = eval(ls[0])() # Création du module
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i]
+
+                    assert l == '\n' # On vérifie qu'on est bien à la fin du module
+
+                # Ajout du module
+                self._modules.append(mod)
+
+                i += 1 # Changement de ligne
+
+        print("Réseau chargé")
+
 class Optim():
     """
     Classe permettant d'effectuer une descente de gradient sur une séquence de modules
@@ -122,7 +199,8 @@ class Optim():
         """
         acc = []
         loss_train = []
-
+        
+        print("Apprentissage du réseau ...")
         for epoch in range(num_epochs):
             if log:
                 print("Itération", epoch)
@@ -156,4 +234,5 @@ class Optim():
                     print("Accuracy =", accuracy)
 
         # On retourne le tableau des accuracy si des données de test sont fournies, None sinon
+        print("Apprentissage terminé")
         return (loss_train, acc) if X_test is not None and Y_test is not None else (loss_train, None)

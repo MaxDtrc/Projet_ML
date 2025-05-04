@@ -1,8 +1,9 @@
+import os
 import numpy as np
 from linear_module import Linear
 from non_linear_module import TanH, Sigmoide
 from neural_network import Loss
-
+from sequence import Sequentiel
 
 class BinaryCrossEntropy(Loss):
     """
@@ -171,6 +172,100 @@ class AutoEncoder():
 
         for mod in self._decoder:
             mod.update_parameters(gradient_step)
+
+    def save(self, name):
+        """
+        Sauvegarde le réseau de neurone dans un fichier texte
+        """
+        with open(os.path.join("networks", name), "w") as file:
+            for mod in self._encoder:
+                if hasattr(mod, "_input_size") and hasattr(mod, "_input_size"):
+                    # Module avec paramètres
+                    file.write("e " + mod.__class__.__name__ + " " + str(mod._input_size) + " " + str(mod._output_size) + '\n')
+
+                    file.write(str(mod._parameters.tolist()) + '\n')
+                    file.write(str(mod._bias.tolist()) + '\n')
+
+                else:
+                    # Module sans paramètres
+                    file.write("e " + mod.__class__.__name__ + '\n')
+                
+                file.write("\n")
+
+            for mod in self._decoder:
+                if hasattr(mod, "_input_size") and hasattr(mod, "_input_size"):
+                    # Module avec paramètres
+                    file.write("d " + mod.__class__.__name__ + " " + str(mod._input_size) + " " + str(mod._output_size) + '\n')
+
+                    file.write(str(mod._parameters.tolist()) + '\n')
+                    file.write(str(mod._bias.tolist()) + '\n')
+
+                else:
+                    # Module sans paramètres
+                    file.write("d " + mod.__class__.__name__ + '\n')
+                
+                file.write("\n") 
+
+        print("Réseau sauvegardé")
+
+    def load(self, name):
+        """
+        Charge un réseau de neurones depuis un fichier texte
+        """
+        self._encoder = []
+        self._decoder = []
+
+        with open(os.path.join("networks", name), "r") as file:
+            # Lecture du fichier
+            lines = file.readlines()
+            i = 0
+
+            # Parcours des lignes
+            while i < len(lines):
+                l = lines[i]
+                ls = l.replace('\n', '').split(" ")
+
+                if len(ls) == 4:
+                    # Modules avec paramètres
+                    mod = eval(ls[1])(int(ls[2]), int(ls[3])) # Création du module
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i].replace('\n', '')
+
+                    mod._parameters = np.array(eval(l)) # Charement des paramètres
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i].replace('\n', '')
+
+                    mod._bias = np.array(eval(l)) # Chargement du biais
+                    
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i]
+
+                    assert l == '\n' # On vérifie qu'on est bien à la fin du module
+
+                if len(ls) == 2:
+                    # Module sans paramètres
+                    mod = eval(ls[1])() # Création du module
+
+                    # Changement de ligne
+                    i += 1
+                    l = lines[i]
+
+                    assert l == '\n' # On vérifie qu'on est bien à la fin du module
+
+                # Ajout du module
+                if ls[0] == "e":
+                    self._encoder.append(mod)
+                elif ls[0] == 'd':
+                    self._decoder.append(mod)
+
+                i += 1 # Changement de ligne
+
+        print("Réseau chargé")
 
 if __name__ == "__main__":
     ae = AutoEncoder(100, 10, 1)

@@ -43,6 +43,9 @@ class TanH(Module):
     def zero_grad(self):
         pass # Pas de gradient à mettre à jour
 
+    def __str__(self):
+        return "TanH"
+
 class Sigmoide(Module):
     """
     Classe représentant une fonction d'activation Sigmoïde
@@ -86,3 +89,6 @@ class Sigmoide(Module):
 
     def zero_grad(self):
         pass # Pas de gradient à mettre à jour
+        
+    def __str__(self):
+        return "Sigmoide"

@@ -95,6 +95,9 @@ class Linear(Module):
         
         assert(d.shape[1] == self._input_size)
         return d
+    
+    def __str__(self):
+        return f"Linear({self._input_size}, {self._output_size})"
         
 
 if __name__ == "__main__":

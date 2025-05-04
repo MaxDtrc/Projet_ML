@@ -28,7 +28,7 @@ Y = Y[indices] # On ne garde que 20 000 images pour accelerer l'entrainement
 X /= 255.0
 
 # Downscale des images
-X = downscale_images(X.reshape(X.shape[0], 28, 28)).reshape(X.shape[0], 256)
+#X = downscale_images(X.reshape(X.shape[0], 28, 28)).reshape(X.shape[0], 256)
 
 # Conversion des labels en one hot encoding
 Y_onehot = OneHotEncoder(sparse_output=False).fit_transform(Y.reshape(-1, 1))
@@ -36,37 +36,46 @@ Y_onehot = OneHotEncoder(sparse_output=False).fit_transform(Y.reshape(-1, 1))
 # Séparation de donnée en train et test
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y_onehot, test_size=0.2, random_state=42)
 
+print("Données d'entrainement chargées et traitées")
 
 # L'architecture du modèle
-input_size = 256
+input_size = 784
 min_size = 16
-steps = 8
+steps = 2
 
 # Creation du reseau
 network = AutoEncoder(input_size, min_size, steps)
 
 # Creation de l'optimiseur
-loss_fn = BinaryCrossEntropy()
+loss_fn = MSELoss()
 learning_rate = 0.01
 
 optim = Optim(network, loss_fn, learning_rate)
 
 # Paramètre pour la descente de gradient en mini-batch
-num_epochs = 20
-batch_size = 1024
+num_epochs = 10
+batch_size = 32
 
 # Apprentissage
-l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
+#l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
+
+# Sauvegarde du réseau
+#network.save("auto_encoder_mse.txt")
+
+# Chargement du réseau
+network.load("auto_encoder_mse.txt")
 
 # Premier chiffre de base
-plt.imshow(X_train[0].reshape(16, 16))
-plt.gray()
-plt.show()
 
-plt.imshow(network.forward(X_train[:1]).reshape(16, 16))
-plt.gray()
-plt.show()
+for i in range(20):
+    plt.imshow(X_train[i].reshape(28, 28))
+    plt.gray()
+    plt.show()
+
+    plt.imshow(network.forward(np.array([X_train[i]])).reshape(28, 28))
+    plt.gray()
+    plt.show()
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
-plt.plot(np.arange(len(l)), l)
-plt.show()  
+#plt.plot(np.arange(len(l)), l)
+#plt.show()
