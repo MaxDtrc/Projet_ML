@@ -50,17 +50,19 @@ network = AutoEncoder(input_size, min_size, steps)
 loss_fn = BinaryCrossEntropy()
 learning_rate = 0.1
 
+network.load("auto_encoder_bce_3.txt")
+
 optim = Optim(network, loss_fn, learning_rate)
 
 # Paramètre pour la descente de gradient en mini-batch
-num_epochs = 10
+num_epochs = 5
 batch_size = 32
 
 # Apprentissage
 l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
 # Sauvegarde du réseau
-network.save("auto_encoder_bce_2.txt")
+network.save("auto_encoder_bce_4.txt")
 
 # Chargement du réseau
 #network.load("auto_encoder_mse.txt")
