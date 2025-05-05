@@ -6,7 +6,7 @@ class Sequentiel():
     Classe permettant de construire une série de modules
     """
 
-    def __init__(self, modules):
+    def __init__(self, modules = []):
         """
         Constructeur de la classe Sequentiel
 

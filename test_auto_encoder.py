@@ -40,15 +40,15 @@ print("Données d'entrainement chargées et traitées")
 
 # L'architecture du modèle
 input_size = 784
-min_size = 16
-steps = 2
+min_size = 32
+steps = 4
 
 # Creation du reseau
 network = AutoEncoder(input_size, min_size, steps)
 
 # Creation de l'optimiseur
-loss_fn = MSELoss()
-learning_rate = 0.01
+loss_fn = BinaryCrossEntropy()
+learning_rate = 0.1
 
 optim = Optim(network, loss_fn, learning_rate)
 
@@ -57,13 +57,13 @@ num_epochs = 10
 batch_size = 32
 
 # Apprentissage
-#l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
+l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
 # Sauvegarde du réseau
-#network.save("auto_encoder_mse.txt")
+network.save("auto_encoder_bce_2.txt")
 
 # Chargement du réseau
-network.load("auto_encoder_mse.txt")
+#network.load("auto_encoder_mse.txt")
 
 # Premier chiffre de base
 

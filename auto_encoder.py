@@ -16,12 +16,15 @@ class BinaryCrossEntropy(Loss):
         y: ensemble des étiquettes des données (n * d)
         y_hat: ensemble des étiquettes prédites (n * d)
         """
-        assert(y.shape == y_hat.shape) # Vérification des dimensions
-        
-        eps = 1e-9  # pour éviter log(0)
-        y_hat = np.clip(y_hat, eps, 1 - eps)
-        
-        return - np.mean(y * np.clip(np.log(y_hat), -100, np.inf) + (1 - y) * np.clip(np.log(1 - y_hat), -100, np.inf))
+        assert y.shape == y_hat.shape
+
+        # Clipping pour éviter log(0)
+        eps = 1e-7
+        y_hat_clipped = np.clip(y_hat, eps, 1 - eps)
+
+        # Calcul de la loss
+        loss = -np.mean(y * np.log(y_hat_clipped) + (1 - y) * np.log(1 - y_hat_clipped))
+        return loss
     
 
     def backward(self, y, y_hat):
@@ -31,20 +34,22 @@ class BinaryCrossEntropy(Loss):
         y: ensemble des étiquettes des données (n)
         y_hat: ensemble des étiquettes prédites (n)
         """
-        assert(y.shape == y_hat.shape) # Vérification des dimensions
+        assert y.shape == y_hat.shape
 
-        n, _ = y.shape
-        eps = 1e-9
-        y_hat = np.clip(y_hat, eps, 1 - eps)
+        # Clipping pour éviter division par zéro
+        eps = 1e-7
+        y_hat_clipped = np.clip(y_hat, eps, 1 - eps)
 
-        return - (y / y_hat - (1 - y) / (1 - y_hat)) / n
+        # Calcul du gradient
+        grad = - (y / y_hat_clipped - (1 - y) / (1 - y_hat_clipped)) / y.size
+        return grad
 
 class AutoEncoder():
     """
     Classe permettant de construire un auto-encoder
     """
 
-    def __init__(self, taille_entree, taille_min, steps):
+    def __init__(self, taille_entree = 256, taille_min = 16, steps = 2):
         """
         Constructeur de la classe AutoEncoder
 
