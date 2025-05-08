@@ -9,8 +9,7 @@ from auto_encoder import AutoEncoder, BinaryCrossEntropy
 from skimage.transform import resize
 
 """
-Permet d'entrainer plusieurs réseaux avec des configurations différentes et de les sauvegarder
-dans des fichiers
+Permet de réentrainer les réseaux MSE pendant 10 epochs supplémentaires
 """
 
 # Load MNIST dataset
@@ -37,9 +36,9 @@ print("Données d'entrainement chargées et traitées")
 # L'architecture du modèle
 input_size = 784
 
-learning_rates = [0.01, 0.1]
-loss_functions = [MSELoss(), BinaryCrossEntropy()]
-max_epochs = [1, 5]
+learning_rates = [0.01]
+loss_functions = [MSELoss()]
+max_epochs = [1]
 batch_sizes = [32, 64]
 min_size_lst = [16, 32]
 steps_list = [1, 2, 4]
@@ -51,19 +50,24 @@ for epochs, learning_rate, loss_fn in zip(max_epochs, learning_rates, loss_funct
             for steps in steps_list:
                 # Creation du reseau
                 network = AutoEncoder(input_size, min_size, steps)
-
+                
                 # Creation de l'optimiseur
                 optim = Optim(network, loss_fn, learning_rate)
 
                 # Apprentissage
                 for j in range(epochs):
+                    file_name = f"auto_{loss_fn.__class__.__name__}_{batch_size}_{min_size}_{steps}_{(j+1) * 10}"
+                    network.load(file_name)
+
                     l, _ = optim.SGD(X_train, X_train, batch_size, 10, log = True)
 
+                    file_name = f"auto_{loss_fn.__class__.__name__}_{batch_size}_{min_size}_{steps}_{(j+2) * 10}"
+
                     # Sauvegarde du réseau
-                    file_name = f"auto_{loss_fn.__class__.__name__}_{batch_size}_{min_size}_{steps}_{(j+1) * 10}"
+                    network.save(file_name)
                     print(file_name, "sauvegardé")
 
                     i += 1
-                    network.save(file_name)
+                    
 
 print(f"Entrainement Terminé ({i})")

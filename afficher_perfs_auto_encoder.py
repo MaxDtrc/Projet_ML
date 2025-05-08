@@ -9,7 +9,7 @@ from auto_encoder import AutoEncoder, BinaryCrossEntropy
 from skimage.transform import resize
 
 """
-Permet d'afficher au hasard 10 chiffres après passage dans l'auto-encoder (chargé depuis un txt)
+Permet d'afficher au hasard 10 chiffres après passage dans l'auto-encoder (chargé depuis un fichier)
 """
 
 # Load MNIST dataset

@@ -270,7 +270,7 @@ class AutoEncoder():
 
                 i += 1 # Changement de ligne
 
-        print("Réseau chargé")
+        print(f"Réseau chargé - {len(self._encoder) + len(self._decoder)} couches")
 
 if __name__ == "__main__":
     ae = AutoEncoder(100, 10, 1)
