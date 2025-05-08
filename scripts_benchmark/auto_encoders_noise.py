@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from auto_encoder import AutoEncoder, BinaryCrossEntropy
 
 """
-Permet de comparer les différentes configurations selon plusieurs critères
+Permet de tester la capacité d'un AE pour débruiter une image
 """
 
 def load_data():
@@ -41,7 +41,7 @@ def load_network(name):
     network.load(name) # Chargement du réseau
     return network 
 
-def show_imgs(imgs, labels, networks, net_labels, loss_fn):
+def show_imgs(imgs, imgs_noise, labels, networks, net_labels, loss_fn):
     """
     Affiche les images et leurs reconstructions (5 images et labels associés)
     """
@@ -52,20 +52,29 @@ def show_imgs(imgs, labels, networks, net_labels, loss_fn):
 
         # Charger les images
         img1 = imgs[i].reshape(28, 28)
+        img2 = imgs_noise[i].reshape(28, 28)
+
 
         # Afficher la première image
-        plt.subplot(len(imgs), len(networks) + 1, (len(networks) + 1) * i + 1)
+        plt.subplot(len(imgs), len(networks) + 2, (len(networks) + 2) * i + 1)
         plt.imshow(img1)
         plt.gray()
         plt.title(labels[i] + " initial")
-        plt.axis('off')  # pour cacher les axes
+        plt.axis('off') 
+
+        # Afficher l'image bruitée
+        plt.subplot(len(imgs), len(networks) + 2, (len(networks) + 2) * i + 2)
+        plt.imshow(img2)
+        plt.gray()
+        plt.title(labels[i] + " bruitée")
+        plt.axis('off') 
 
         for j in range(len(networks)):
-            img = networks[j].forward(np.array([imgs[i]])).reshape(28, 28)
+            img = networks[j].forward(np.array([imgs_noise[i]])).reshape(28, 28)
             l = loss_fn.forward(img1, img).round(3)
 
             # Afficher la deuxième image
-            plt.subplot(len(imgs), len(networks) + 1, (len(networks) + 1) * i + j + 2)
+            plt.subplot(len(imgs), len(networks) + 2, (len(networks) + 2) * i + j + 3)
             plt.imshow(img)
             plt.gray()
             plt.title(f"{net_labels[j]} - L = {l}")
@@ -78,21 +87,27 @@ def show_imgs(imgs, labels, networks, net_labels, loss_fn):
 # Chargement des données et des networks
 X, Y = load_data()
 
+noise_intensity = 0.6
+
 # Sélection des images
 imgs = [X[np.where(Y == i)[0][0]] for i in range(10)]
+imgs_noise = [np.array([min(1.0, max(0.0, px + (np.random.rand() * 2 - 1) * noise_intensity)) for px in img]) for img in imgs]
+
 labels = [str(i) for i in range(10)]
 
-# Fonction de coût
-loss_fn = MSELoss() 
 
-# Chargement des réseaux
-network1 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_1_20")
-network2 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_2_20")
-network3 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_4_20")
+def test_noise():
+    # Chargement des réseaux
+    network1 = load_network(f"auto_MSELoss_32_16_4_20")
+    network2 = load_network(f"auto_BinaryCrossEntropy_32_16_4_50")
 
-networks = [network1, network2, network3]
-net_labels = ["2 couches", "4 couches", "8 couches"]
+    networks = [network1, network2]
+    net_labels = ["MSE", "BCE"]
 
-# Affichage
-show_imgs(imgs[:5], labels[:5], networks, net_labels, loss_fn) # Affichage 5 premiers
-show_imgs(imgs[5:], labels[5:], networks, net_labels, loss_fn) # Affichage 5 suivants
+    # Affichage
+    show_imgs(imgs[:5], imgs_noise[:5], labels[:5], networks, net_labels, MSELoss()) # Affichage 5 premiers
+    show_imgs(imgs[5:], imgs_noise[5:], labels[5:], networks, net_labels, MSELoss()) # Affichage 5 suivants
+
+
+"""Affichages"""
+test_noise()
