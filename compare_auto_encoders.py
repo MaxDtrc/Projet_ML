@@ -41,53 +41,35 @@ def load_network(name):
     network.load(name) # Chargement du réseau
     return network 
 
-def show_imgs(imgs, labels):
+def show_imgs(imgs, labels, networks, net_labels, loss_fn):
     """
     Affiche les images et leurs reconstructions (5 images et labels associés)
     """
     plt.figure(figsize=(12, 5))
 
-    for i in range(5):
+    for i in range(len(imgs)):
         print("Image", i)
 
         # Charger les images
         img1 = imgs[i].reshape(28, 28)
-        img2 = network1.forward(np.array([imgs[i]])).reshape(28, 28)
-        img3 = network2.forward(np.array([imgs[i]])).reshape(28, 28)
-        img4 = network3.forward(np.array([imgs[i]])).reshape(28, 28)
-
-        loss_fn = MSELoss()
-        l1 = loss_fn.forward(img1, img2).round(2)
-        l2 = loss_fn.forward(img1, img3).round(2)
-        l3 = loss_fn.forward(img1, img4).round(2)
 
         # Afficher la première image
-        plt.subplot(5, 4, 4*i + 1)
+        plt.subplot(len(imgs), len(networks) + 1, (len(networks) + 1) * i + 1)
         plt.imshow(img1)
         plt.gray()
         plt.title(labels[i] + " initial")
         plt.axis('off')  # pour cacher les axes
 
-        # Afficher la deuxième image
-        plt.subplot(5, 4, 4*i + 2)
-        plt.imshow(img2)
-        plt.gray()
-        plt.title(f"2 couches - L = {l1}")
-        plt.axis('off')
+        for j in range(len(networks)):
+            img = networks[j].forward(np.array([imgs[i]])).reshape(28, 28)
+            l = loss_fn.forward(img1, img).round(3)
 
-        # Afficher la deuxième image
-        plt.subplot(5, 4, 4*i + 3)
-        plt.imshow(img3)
-        plt.gray()
-        plt.title(f"4 couches - L = {l2}")
-        plt.axis('off')
-
-        # Afficher la deuxième image
-        plt.subplot(5, 4, 4*i + 4)
-        plt.imshow(img4)
-        plt.gray()
-        plt.title(f"8 couches - L = {l3}")
-        plt.axis('off')
+            # Afficher la deuxième image
+            plt.subplot(len(imgs), len(networks) + 1, (len(networks) + 1) * i + j + 2)
+            plt.imshow(img)
+            plt.gray()
+            plt.title(f"{net_labels[j]} - L = {l}")
+            plt.axis('off')
 
         plt.tight_layout()
 
@@ -96,15 +78,21 @@ def show_imgs(imgs, labels):
 # Chargement des données et des networks
 X, Y = load_data()
 
-network1 = load_network("auto_MSELoss_32_16_1_10")
-network2 = load_network("auto_MSELoss_32_16_2_10")
-network3 = load_network("auto_MSELoss_32_16_4_10")
+loss_fn = MSELoss() # Fonction de coût
+
+# Chargement des réseaux
+network1 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_1_20")
+network2 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_2_20")
+network3 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_4_20")
+
+networks = [network1, network2, network3]
+net_labels = ["2 couches", "4 couches", "8 couches"]
 
 # Sélection des images
 imgs = [X[np.where(Y == i)[0][0]] for i in range(10)]
-labels = [i for i in range(10)]
+labels = [str(i) for i in range(10)]
 
 # Affichage
-show_imgs(imgs[:5], labels[:5]) # Affichage 5 premiers
-show_imgs(imgs[5:], labels[5:]) # Affichage 5 suivants
+show_imgs(imgs[:5], labels[:5], networks, net_labels, loss_fn) # Affichage 5 premiers
+show_imgs(imgs[5:], labels[5:], networks, net_labels, loss_fn) # Affichage 5 suivants
 
