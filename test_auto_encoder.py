@@ -50,8 +50,6 @@ network = AutoEncoder(input_size, min_size, steps)
 loss_fn = MSELoss()
 learning_rate = 0.01
 
-network.load("auto_MSELoss_32_16_1_10.txt")
-
 optim = Optim(network, loss_fn, learning_rate)
 
 # Paramètre pour la descente de gradient en mini-batch
@@ -61,14 +59,7 @@ batch_size = 32
 # Apprentissage
 l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
-# Sauvegarde du réseau
-network.save("auto_encoder_2_neurones.txt")
-
-# Chargement du réseau
-#network.load("auto_encoder_mse.txt")
-
-# Premier chiffre de base
-
+# Affichag de 20 chiffres
 for i in range(20):
     plt.imshow(X_train[i].reshape(28, 28))
     plt.gray()
@@ -79,5 +70,5 @@ for i in range(20):
     plt.show()
 
 # Affichage de l'évolution de l'accuracy sur les données de test :
-#plt.plot(np.arange(len(l)), l)
-#plt.show()
+plt.plot(np.arange(len(l)), l)
+plt.show()

@@ -30,7 +30,7 @@ X /= 255.0
 network = AutoEncoder()
 
 # Chargement du réseau
-network.load("auto_encoder_2_neurones.txt")
+network.load("auto_BinaryCrossEntropy_32_32_4_50")
 
 plt.figure(figsize=(10, 5))
 for i in range(10):
