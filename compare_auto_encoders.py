@@ -78,7 +78,12 @@ def show_imgs(imgs, labels, networks, net_labels, loss_fn):
 # Chargement des données et des networks
 X, Y = load_data()
 
-loss_fn = MSELoss() # Fonction de coût
+# Sélection des images
+imgs = [X[np.where(Y == i)[0][0]] for i in range(10)]
+labels = [str(i) for i in range(10)]
+
+# Fonction de coût
+loss_fn = MSELoss() 
 
 # Chargement des réseaux
 network1 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_1_20")
@@ -88,11 +93,6 @@ network3 = load_network(f"auto_{loss_fn.__class__.__name__}_32_16_4_20")
 networks = [network1, network2, network3]
 net_labels = ["2 couches", "4 couches", "8 couches"]
 
-# Sélection des images
-imgs = [X[np.where(Y == i)[0][0]] for i in range(10)]
-labels = [str(i) for i in range(10)]
-
 # Affichage
 show_imgs(imgs[:5], labels[:5], networks, net_labels, loss_fn) # Affichage 5 premiers
 show_imgs(imgs[5:], labels[5:], networks, net_labels, loss_fn) # Affichage 5 suivants
-
