@@ -40,29 +40,29 @@ print("Données d'entrainement chargées et traitées")
 
 # L'architecture du modèle
 input_size = 784
-min_size = 32
+min_size = 4
 steps = 4
 
 # Creation du reseau
 network = AutoEncoder(input_size, min_size, steps)
 
 # Creation de l'optimiseur
-loss_fn = BinaryCrossEntropy()
-learning_rate = 0.1
+loss_fn = MSELoss()
+learning_rate = 0.01
 
-network.load("auto_encoder_bce_3.txt")
+network.load("auto_MSELoss_32_16_1_10.txt")
 
 optim = Optim(network, loss_fn, learning_rate)
 
 # Paramètre pour la descente de gradient en mini-batch
-num_epochs = 5
+num_epochs = 10
 batch_size = 32
 
 # Apprentissage
 l, _ = optim.SGD(X_train, X_train, batch_size, num_epochs, log = True)
 
 # Sauvegarde du réseau
-network.save("auto_encoder_bce_4.txt")
+network.save("auto_encoder_2_neurones.txt")
 
 # Chargement du réseau
 #network.load("auto_encoder_mse.txt")

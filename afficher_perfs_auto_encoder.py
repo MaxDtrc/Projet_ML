@@ -30,7 +30,7 @@ X /= 255.0
 network = AutoEncoder()
 
 # Chargement du réseau
-network.load("auto_encoder_bce_2.txt")
+network.load("auto_encoder_2_neurones.txt")
 
 plt.figure(figsize=(10, 5))
 for i in range(10):
