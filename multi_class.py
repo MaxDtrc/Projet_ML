@@ -16,7 +16,7 @@ class CrossEntropyWithLogSoftmax(Loss):
 
         # Stabilité numérique avec log-sum-exp trick
         max_logits = np.max(y_hat, axis=1, keepdims=True)
-        logsumexp = max_logits + np.log(np.sum(np.exp(y_hat - max_logits), axis=1, keepdims=True)) # On retire le max sur chaque ligne pour éviter les trop grosse valeurs
+        logsumexp = max_logits + np.log(np.sum(np.exp(y_hat - max_logits), axis=1, keepdims=True)) 
         correct_class_logits = np.sum(y * y_hat, axis=1, keepdims=True)
 
         loss = -correct_class_logits + logsumexp
