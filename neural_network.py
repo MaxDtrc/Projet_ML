@@ -1,5 +1,9 @@
 import numpy as np
 
+"""
+Classes abstraites
+"""
+
 
 class Loss(object):
     def forward(self, y, yhat):

@@ -17,6 +17,7 @@ class TanH(Module):
         Calcule la sortie de la couche pour chacune des valeurs passées en paramètres
         en appliquant la fonction tanH.
 
+        Parametres
         X : ensemble des données (taille n * dim)
         Sortie : taille n * output_size
         """
@@ -28,6 +29,7 @@ class TanH(Module):
         Calcule le gradient des entrées en fonction des entrées
         de la couche suivante
 
+        Parametres
         input : entrées (n'entrent pas en compte dans le calcul)
         delta: gradient des entrées de la couche suivante
         """
@@ -63,6 +65,7 @@ class Sigmoide(Module):
         Calcule la sortie de la couche pour chacune des valeurs passées en paramètres
         en appliquant la fonction sigmoide.
 
+        Parametres
         X : ensemble des données (taille n * dim)
         Sortie : taille n * output_size
         """
@@ -73,8 +76,9 @@ class Sigmoide(Module):
         """
         Calcule le gradient des entrées en fonction des entrées
         de la couche suivante, en utilisant la dérivée de la fonction
-        sigmoide : σ(x) * (1 - σ(x))
+        sigmoide : sigma(x) * (1 - sigma(x))
 
+        Parametres
         input : entrées (n'entrent pas en compte dans le calcul)
         delta: gradient des entrées de la couche suivante
         """

@@ -9,6 +9,8 @@ class CrossEntropyWithLogSoftmax(Loss):
     def forward(self, y, y_hat):
         """
         Renvoie la cross-entropie des données passées en paramètres
+
+        Parametres
         y: ensemble des étiquettes des données (n * d)
         y_hat: ensemble des étiquettes prédites (n * d)
         """
@@ -26,6 +28,7 @@ class CrossEntropyWithLogSoftmax(Loss):
         """
         Renvoie le gradient du coût par rapport aux données prédites y_hat
 
+        Parametres
         y: ensemble des étiquettes des données (n)
         y_hat: ensemble des étiquettes prédites (n)
         """
@@ -57,6 +60,7 @@ class Softmax(Module):
         Calcule la sortie de la couche pour chacune des valeurs passées en paramètres
         en appliquant la fonction Softmax.
 
+        Parametres
         X : ensemble des données (taille n * dim)
         Sortie : taille n * output_size
         """
@@ -69,6 +73,7 @@ class Softmax(Module):
         Calcule le gradient des entrées en fonction des entrées
         de la couche suivante
 
+        Parametres
         input : entrées (n'entrent pas en compte dans le calcul)
         delta: gradient des entrées de la couche suivante
         """

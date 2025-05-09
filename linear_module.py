@@ -9,6 +9,8 @@ class MSELoss(Loss):
     def forward(self, y, y_hat):
         """
         Renvoie la MSE des données passées en paramètres
+
+        Parametres
         y: ensemble des étiquettes des données (n * d)
         y_hat: ensemble des étiquettes prédites (n * d)
         """
@@ -19,6 +21,7 @@ class MSELoss(Loss):
         """
         Renvoie le gradient du coût par rapport aux données prédites y_hat
 
+        Parametres
         y: ensemble des étiquettes des données (n)
         y_hat: ensemble des étiquettes prédites (n)
         """
@@ -68,6 +71,7 @@ class Linear(Module):
         Calcule le gradient des paramètres en fonction d'une entrée et des delta de la couche suivante.
         Ici, il s'agit d'une couche linéaire. Donc, d(w_ij) = delta_j * x_i
 
+        Parametres
         input : entrées (taille n)
         delta : dérivées des entrées de la couche suivante (taille output_size)
         """
@@ -85,6 +89,7 @@ class Linear(Module):
         Calcule le gradient des entrées par rapport à une entrée et aux dérivées des entrées de la couche suivante.
         Ici, il s'agit d'une couche linéaire. Donc, d(z_i) = somme_sur_j(x_i * z_j * w_ij)
 
+        Parametres
         input : entrées (taille n)
         delta : dérivées des entrées de la couche suivante (taille output_size)
         """

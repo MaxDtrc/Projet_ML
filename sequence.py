@@ -19,6 +19,7 @@ class Sequentiel():
         """
         Calcule la sortie de la séquence pour les données passées en paramètres
 
+        Parametres
         X: ensemble des données (taille n * dim)
         Sortie: taille n * dimension_sortie
         """
@@ -33,6 +34,7 @@ class Sequentiel():
         """
         Calcule et renvoie les sorties de chaque couche
 
+        Parametres
         X: ensemble des données (taille n * dim)
         Sortie: taille n * dimension_sortie
         """
@@ -50,6 +52,7 @@ class Sequentiel():
         """
         Met à jour les gradients de chaque module
 
+        Parametres
         data: donnees en entrée du réseau
         delta: delta de la fonction de coût (ou de la couche suivante)
         """
@@ -173,6 +176,7 @@ class Optim():
         """
         Effectue une itération de la descente de gradient
 
+        Parametres
         X: données en entrée
         Y: étiquettes des données
         """
@@ -189,6 +193,7 @@ class Optim():
         """
         Effectue l'apprentissage du réseau pendant un certain nombre d'itérations en mode mini-batch
 
+        Parametres
         X: données en entrées
         Y: étiquettes des données
         batch_size: taille des batch pour le découpage

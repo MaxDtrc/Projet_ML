@@ -13,6 +13,8 @@ class BinaryCrossEntropy(Loss):
     def forward(self, y, y_hat):
         """
         Renvoie le coût des données passées en paramètres
+
+        Paramètres
         y: ensemble des étiquettes des données (n * d)
         y_hat: ensemble des étiquettes prédites (n * d)
         """
@@ -31,6 +33,7 @@ class BinaryCrossEntropy(Loss):
         """
         Renvoie le gradient du coût par rapport aux données prédites y_hat
 
+        Paramètres
         y: ensemble des étiquettes des données (n)
         y_hat: ensemble des étiquettes prédites (n)
         """
@@ -56,21 +59,21 @@ class AutoEncoder():
         Parametres
         taille_entree: dimension des entrées
         taille_min: taille de la plus petite couche
-        steps: nombre de couches pour la descente/remontée
+        steps: nombre de couches pour l'encoder/decoder
         """
         s = (taille_entree - taille_min) // steps
 
         # Couches de l'encodeur
         self._encoder = []
         for i in range(taille_entree, taille_min + s - 1, - s):
-            print("Encodeur - couche", i, "->", i - s, "ajoutée")
+            #print("Encodeur - couche", i, "->", i - s, "ajoutée")
             self._encoder.append(Linear(i, i - s))
             self._encoder.append(TanH())
 
         # Couches du décodeur
         self._decoder = []
         for i in range(taille_min, taille_entree - s + 1, s):
-            print("Decodeur - couche", i, "->", i + s, "ajoutée")
+            #print("Decodeur - couche", i, "->", i + s, "ajoutée")
             self._decoder.append(Linear(i, i + s))
             self._decoder.append(TanH())
 
@@ -81,8 +84,9 @@ class AutoEncoder():
     
     def forward(self, data):
         """
-        Calcule la sortie de la séquence pour les données passées en paramètres
+        Calcule la sortie de l'auto-encoder pour les données passées en paramètres
 
+        Parametres
         X: ensemble des données (taille n * dim)
         Sortie: taille n * dimension_sortie
         """
@@ -92,6 +96,7 @@ class AutoEncoder():
         """
         Calcule l'encodage des données passées en paramètres
 
+        Parametres
         X: ensemble des données (taille n * dim)
         Sortie: taille n * dimension_encodage
         """
@@ -106,6 +111,7 @@ class AutoEncoder():
         """
         Decode les données passées en paramètres
 
+        Parametres
         X: ensemble des données (taille n * dimension_encodage)
         Sortie: taille n * dim
         """
